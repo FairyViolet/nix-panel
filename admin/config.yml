@@ -1,0 +1,239 @@
+# Panel de Mi Mundo Nix (Sveltia CMS)
+#
+# Edita el repositorio privado FairyViolet/mi-mundo-nix. Cada vez que publicas
+# algo, GitHub Actions genera el sitio y lo sube a Neocities solo
+# (.github/workflows/publicar.yml en ese repositorio).
+#
+# Formato de las entradas: igual que el editor local (tools/editor.html).
+#   posts/<slug>.md      espanol (el original)
+#   posts/<slug>.en.md   ingles
+
+backend:
+  name: github
+  repo: FairyViolet/mi-mundo-nix
+  branch: main
+  commit_messages:
+    create: "panel: nueva {{collection}} {{slug}}"
+    update: "panel: edita {{collection}} {{slug}}"
+    delete: "panel: borra {{collection}} {{slug}}"
+    uploadMedia: "panel: sube {{path}}"
+    deleteMedia: "panel: quita {{path}}"
+
+site_url: https://ultravioletfairy.neocities.org
+display_url: https://ultravioletfairy.neocities.org
+logo_url: https://ultravioletfairy.neocities.org/assets/img/ui/fox-head.webp
+
+# Imagenes: se convierten a WebP en el navegador antes de subir (regla del sitio)
+media_folder: assets/img/posts
+public_folder: assets/img/posts
+media_libraries:
+  default:
+    config:
+      transformations:
+        raster_image:
+          format: webp
+          quality: 85
+          width: 1600
+          height: 1600
+
+# Espanol + ingles: <slug>.md y <slug>.en.md
+i18n:
+  structure: multiple_files
+  locales: [es, en]
+  default_locale: es
+  omit_default_locale_from_file_path: true
+
+slug:
+  encoding: ascii
+  clean_accents: true
+
+output:
+  yaml:
+    quote: none
+
+collections:
+  - name: diario
+    label: Diario
+    label_singular: entrada del diario
+    icon: edit_note
+    folder: posts
+    extension: md
+    format: yaml-frontmatter
+    create: true
+    i18n: true
+    filter: { field: type, value: diario }
+    slug: "{{slug}}"
+    summary: "{{date}} · {{title}}"
+    sortable_fields: [date, title]
+    fields:
+      - { name: type, label: Tipo, widget: hidden, default: diario, i18n: duplicate }
+      - &title { name: title, label: Titulo, widget: string, i18n: true }
+      - &date { name: date, label: Fecha, widget: datetime, type: date, i18n: duplicate }
+      - &tags
+        name: tags
+        label: Etiquetas
+        hint: "En minusculas. Usa las que ya tienes (mira la seccion Etiquetas). En ingles se traducen con el diccionario de etiquetas."
+        widget: list
+        required: false
+        i18n: duplicate
+      - &mood { name: mood, label: Animo, widget: string, required: false, i18n: duplicate }
+      - &song { name: song, label: "Sonando (enlace de YouTube)", widget: string, required: false, i18n: duplicate, hint: "Opcional. Pega el enlace de la cancion: sale como 'escuchando'." }
+      - &cover { name: image, label: "Imagen de portada", widget: image, required: false, i18n: duplicate }
+      - &audio
+        name: audio
+        label: "Audio propio (mp3, ogg o wav)"
+        widget: file
+        required: false
+        i18n: duplicate
+        media_folder: /assets/audio
+        public_folder: assets/audio
+        accept: ".mp3,.ogg,.wav,audio/mpeg,audio/ogg,audio/wav"
+      - &video { name: video, label: "Video (enlace de YouTube)", widget: string, required: false, i18n: duplicate, hint: "Opcional. En la web se carga al pulsar." }
+      - &excerpt { name: excerpt, label: "Resumen (opcional)", widget: string, required: false, i18n: true, hint: "Si lo dejas vacio se usa el principio del texto." }
+      - &pinned { name: pinned, label: "Fijada arriba", widget: boolean, default: false, required: false, i18n: duplicate }
+      - &draft { name: draft, label: "Borrador (no se publica)", widget: boolean, default: false, required: false, i18n: duplicate }
+      - &body
+        name: body
+        label: Texto
+        widget: markdown
+        modes: [raw, rich_text]
+        i18n: true
+        hint: "Extras del sitio: :::nota ... ::: (bloque destacado), [[ui:heart-pixel]] (adorno), --- (separador)."
+
+  - name: poemas
+    label: Poemas
+    label_singular: poema
+    icon: auto_stories
+    folder: posts
+    extension: md
+    format: yaml-frontmatter
+    create: true
+    i18n: true
+    filter: { field: type, value: poema }
+    slug: "{{slug}}"
+    summary: "{{date}} · {{title}}"
+    sortable_fields: [date, title]
+    fields:
+      - { name: type, label: Tipo, widget: hidden, default: poema, i18n: duplicate }
+      - *title
+      - *date
+      - *tags
+      - *mood
+      - *song
+      - *audio
+      - *excerpt
+      - *pinned
+      - *draft
+      - name: body
+        label: "Poema (un verso por linea)"
+        widget: markdown
+        modes: [raw]
+        i18n: true
+
+  - name: dibujos
+    label: Dibujos
+    label_singular: dibujo
+    icon: palette
+    folder: posts
+    extension: md
+    format: yaml-frontmatter
+    create: true
+    i18n: true
+    filter: { field: type, value: dibujo }
+    slug: "{{slug}}"
+    summary: "{{date}} · {{title}}"
+    sortable_fields: [date, title]
+    fields:
+      - { name: type, label: Tipo, widget: hidden, default: dibujo, i18n: duplicate }
+      - *title
+      - *date
+      - { name: image, label: "Tu dibujo", widget: image, i18n: duplicate }
+      - *tags
+      - *mood
+      - *song
+      - *audio
+      - *video
+      - *pinned
+      - *draft
+      - { name: body, label: "Nota sobre el dibujo", widget: markdown, modes: [raw, rich_text], required: false, i18n: true }
+
+  - name: capitulos
+    label: Historias (capitulos)
+    label_singular: capitulo
+    icon: menu_book
+    folder: posts
+    extension: md
+    format: yaml-frontmatter
+    create: true
+    i18n: true
+    filter: { field: type, value: historia }
+    slug: "{{slug}}"
+    summary: "{{story}} · cap. {{chapter}} · {{title}}"
+    sortable_fields: [date, title, chapter]
+    fields:
+      - { name: type, label: Tipo, widget: hidden, default: historia, i18n: duplicate }
+      - *title
+      - *date
+      - { name: story, label: "Historia (su id)", widget: string, i18n: duplicate,
+          hint: "El id de la historia, tal como aparece en 'Historias (lista)'. Ej: la-reina-de-ceniza" }
+      - { name: chapter, label: "Capitulo n.", widget: number, value_type: int, min: 1, default: 1, i18n: duplicate }
+      - *tags
+      - *mood
+      - *song
+      - *cover
+      - *audio
+      - *video
+      - *excerpt
+      - *draft
+      - *body
+
+  - name: ajustes
+    label: Ajustes
+    icon: settings
+    i18n: false
+    files:
+      - name: historias
+        label: Historias (lista)
+        file: posts/historias.json
+        fields:
+          - name: items
+            label: Historias
+            label_singular: historia
+            widget: list
+            root: true
+            summary: "{{title}} ({{id}})"
+            fields:
+              - { name: id, label: "Id (sin espacios ni tildes)", widget: string, pattern: ["^[a-z0-9-]+$", "Solo minusculas, numeros y guiones"] }
+              - { name: title, label: Titulo, widget: string }
+              - { name: title_en, label: "Titulo en ingles", widget: string, required: false }
+              - { name: summary, label: "De que va", widget: text, required: false }
+              - { name: summary_en, label: "De que va (ingles)", widget: text, required: false }
+              - { name: cover, label: Portada, widget: image, required: false }
+
+      - name: etiquetas
+        label: Etiquetas en ingles
+        file: posts/etiquetas.json
+        fields:
+          - name: nombres
+            label: "Etiqueta -> ingles"
+            widget: keyvalue
+            root: true
+            key_label: "Etiqueta (espanol)"
+            value_label: "En ingles"
+            required: false
+
+      - name: musica
+        label: Musica del Nixgotchi
+        file: assets/data/musica.json
+        fields:
+          - { name: name, label: "Nombre de la playlist", widget: string }
+          - { name: playlist, label: "Enlace a la playlist", widget: string }
+          - name: songs
+            label: Canciones
+            label_singular: cancion
+            widget: list
+            summary: "{{artist}} - {{title}}"
+            fields:
+              - { name: id, label: "Id del video (lo que va tras watch?v=)", widget: string, pattern: ["^[A-Za-z0-9_-]{6,20}$", "Solo el id del video"] }
+              - { name: artist, label: Artista, widget: string }
+              - { name: title, label: Cancion, widget: string }

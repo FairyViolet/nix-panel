@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Comentarios · Mi Mundo Nix</title>
+<!--
+  Comentarios de Mi Mundo Nix (Cusdis).
+
+  Esta pagina vive en GitHub Pages y la web de Neocities la muestra en un
+  <iframe>: Neocities gratis no deja que sus paginas hablen con otros
+  servidores, y Cusdis lo necesita. Aqui no hay ese bloqueo.
+
+  Parametros (los pone blog.js): app, id, url, title, lang.
+  Solo acepta paginas de la web de Iris.
+-->
+<style>
+  html, body { margin: 0; padding: 0; background: transparent; }
+  body { font-family: Georgia, serif; color: #EFE4F5; }
+  #error { font-family: monospace; color: #F7A8C4; }
+</style>
+</head>
+<body>
+<div id="cusdis_thread"></div>
+<p id="error" hidden></p>
+
+<script>
+(function () {
+  'use strict';
+
+  var SITE = 'https://ultravioletfairy.neocities.org';
+  var p = new URLSearchParams(location.search);
+  var app = p.get('app') || '';
+  var id = p.get('id') || '';
+  var url = p.get('url') || '';
+  var title = (p.get('title') || '').slice(0, 200);
+  var lang = p.get('lang') === 'en' ? 'en' : 'es';
+
+  function fail(msg) {
+    var e = document.getElementById('error');
+    e.textContent = msg;
+    e.hidden = false;
+  }
+
+  /* Solo comentarios de la web de Iris, con ids normales */
+  if (!/^[\w-]{6,64}$/.test(app) || !/^[a-z0-9-]{1,80}$/.test(id) || url.indexOf(SITE + '/') !== 0) {
+    fail('Comentarios no disponibles.');
+    return;
+  }
+
+  var t = document.getElementById('cusdis_thread');
+  t.setAttribute('data-host', 'https://cusdis.com');
+  t.setAttribute('data-app-id', app);
+  t.setAttribute('data-page-id', id);
+  t.setAttribute('data-page-url', url);
+  t.setAttribute('data-page-title', title);
+  t.setAttribute('data-theme', 'dark');
+
+  function load(src, done) {
+    var s = document.createElement('script');
+    s.src = src;
+    s.async = true;
+    if (done) s.onload = done;
+    s.onerror = function () { fail('No se pudieron cargar los comentarios.'); };
+    document.body.appendChild(s);
+  }
+
+  /* Primero el idioma, luego el widget */
+  load('https://cusdis.com/js/widget/lang/' + lang + '.js', function () {
+    load('https://cusdis.com/js/cusdis.es.js');
+  });
+
+  /* Avisa a la web de su altura para que el marco no tenga scroll propio */
+  function report() {
+    var h = document.documentElement.scrollHeight;
+    if (window.parent !== window) {
+      window.parent.postMessage({ from: 'nix-comments', height: h }, SITE);
+    }
+  }
+  new ResizeObserver(report).observe(document.body);
+  window.addEventListener('load', report);
+  setInterval(report, 1500);
+})();
+</script>
+</body>
+</html>
