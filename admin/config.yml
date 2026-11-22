@@ -258,11 +258,11 @@ collections:
             required: false
 
       - name: musica
-        label: Musica del Nixgotchi
+        label: Musica de Nix Radio
         file: assets/data/musica.json
         fields:
           - { name: name, label: "Nombre de la playlist", widget: string }
-          - { name: playlist, label: "Enlace a la playlist", widget: string }
+          - { name: playlist, label: "Enlace a la playlist de YouTube", widget: string, hint: "Nix Radio reproduce la lista entera. Las canciones de abajo son solo el respaldo." }
           - name: songs
             label: Canciones
             label_singular: cancion
