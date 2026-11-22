@@ -89,6 +89,8 @@ collections:
         public_folder: assets/audio
         accept: ".mp3,.ogg,.wav,audio/mpeg,audio/ogg,audio/wav"
       - &video { name: video, label: "Video (enlace de YouTube)", widget: string, required: false, i18n: duplicate, hint: "Opcional. En la web se carga al pulsar." }
+      - &instagram { name: instagram, label: "Publicacion de Instagram (enlace)", widget: string, required: false, i18n: duplicate, hint: "Opcional. Pega el enlace de una publicacion tuya: sale en la entrada y se carga al pulsar." }
+      - &collection { name: collection, label: "Coleccion (su id)", widget: string, required: false, i18n: duplicate, pattern: ["^[a-z0-9-]*$", "Solo minusculas, numeros y guiones"], hint: "Opcional. El id de una coleccion de Ajustes -> Colecciones, para agrupar entradas en una serie." }
       - &excerpt { name: excerpt, label: "Resumen (opcional)", widget: string, required: false, i18n: true, hint: "Si lo dejas vacio se usa el principio del texto." }
       - &pinned { name: pinned, label: "Fijada arriba", widget: boolean, default: false, required: false, i18n: duplicate }
       - &draft { name: draft, label: "Borrador (no se publica)", widget: boolean, default: false, required: false, i18n: duplicate }
@@ -118,6 +120,8 @@ collections:
       - *title
       - *date
       - *tags
+      - *collection
+      - *instagram
       - *mood
       - *song
       - *audio
@@ -149,6 +153,8 @@ collections:
       - *date
       - { name: image, label: "Tu dibujo", widget: image, i18n: duplicate }
       - *tags
+      - *collection
+      - *instagram
       - *mood
       - *song
       - *audio
@@ -156,6 +162,33 @@ collections:
       - *pinned
       - *draft
       - { name: body, label: "Nota sobre el dibujo", widget: markdown, modes: [raw, rich_text], required: false, i18n: true }
+
+  - name: fotos
+    label: Fotos
+    label_singular: foto
+    icon: photo_camera
+    folder: posts
+    extension: md
+    format: yaml-frontmatter
+    create: true
+    i18n: true
+    filter: { field: type, value: foto }
+    slug: "{{slug}}"
+    summary: "{{date}} · {{title}}"
+    sortable_fields: [date, title]
+    fields:
+      - { name: type, label: Tipo, widget: hidden, default: foto, i18n: duplicate }
+      - *title
+      - *date
+      - { name: image, label: "La foto", widget: image, i18n: duplicate }
+      - *tags
+      - *collection
+      - *instagram
+      - *mood
+      - *song
+      - *pinned
+      - *draft
+      - { name: body, label: "Que es esta foto", widget: markdown, modes: [raw, rich_text], required: false, i18n: true }
 
   - name: capitulos
     label: Historias (capitulos)
@@ -178,6 +211,8 @@ collections:
           hint: "El id de la historia, tal como aparece en 'Historias (lista)'. Ej: la-reina-de-ceniza" }
       - { name: chapter, label: "Capitulo n.", widget: number, value_type: int, min: 1, default: 1, i18n: duplicate }
       - *tags
+      - *collection
+      - *instagram
       - *mood
       - *song
       - *cover
@@ -237,3 +272,182 @@ collections:
               - { name: id, label: "Id del video (lo que va tras watch?v=)", widget: string, pattern: ["^[A-Za-z0-9_-]{6,20}$", "Solo el id del video"] }
               - { name: artist, label: Artista, widget: string }
               - { name: title, label: Cancion, widget: string }
+
+      - name: notas
+        label: Notas rapidas
+        file: posts/notas.json
+        fields:
+          - name: items
+            label: Notas
+            label_singular: nota
+            widget: list
+            root: true
+            add_to_top: true
+            summary: "{{date}} · {{text}}"
+            fields:
+              - { name: date, label: Fecha, widget: datetime, type: date }
+              - { name: text, label: "Nota", widget: text }
+              - { name: text_en, label: "Nota en ingles (opcional)", widget: text, required: false }
+              - { name: mood, label: "Animo (opcional)", widget: select, required: false, options: [{ label: "feliz", value: feliz }, { label: "tranquila", value: tranquila }, { label: "inspirada", value: inspirada }, { label: "cansada", value: cansada }, { label: "triste", value: triste }, { label: "ansiosa", value: ansiosa }, { label: "enojada", value: enojada }, { label: "rara", value: rara }] }
+
+      - name: animo
+        label: Registro de animo
+        file: posts/animo.json
+        fields:
+          - name: items
+            label: Dias
+            label_singular: dia
+            widget: list
+            root: true
+            add_to_top: true
+            summary: "{{date}} · {{mood}}"
+            fields:
+              - { name: date, label: Fecha, widget: datetime, type: date }
+              - { name: mood, label: "Como me siento", widget: select, options: [{ label: "feliz", value: feliz }, { label: "tranquila", value: tranquila }, { label: "inspirada", value: inspirada }, { label: "cansada", value: cansada }, { label: "triste", value: triste }, { label: "ansiosa", value: ansiosa }, { label: "enojada", value: enojada }, { label: "rara", value: rara }] }
+              - { name: note, label: "Por que (opcional)", widget: string, required: false }
+              - { name: note_en, label: "Por que, en ingles (opcional)", widget: string, required: false }
+
+      - name: ahora
+        label: Ahora mismo
+        file: posts/ahora.json
+        fields:
+          - { name: leyendo, label: Leyendo, widget: string, required: false }
+          - { name: viendo, label: Viendo, widget: string, required: false }
+          - { name: jugando, label: Jugando, widget: string, required: false }
+          - { name: escuchando, label: Escuchando, widget: string, required: false }
+          - { name: actualizado, label: "Actualizado el", widget: datetime, type: date, required: false }
+
+      - name: metas
+        label: Metas
+        file: posts/metas.json
+        fields:
+          - name: items
+            label: Metas
+            label_singular: meta
+            widget: list
+            root: true
+            summary: "{{text}}"
+            fields:
+              - { name: text, label: Meta, widget: string }
+              - { name: text_en, label: "Meta en ingles (opcional)", widget: string, required: false }
+              - { name: done, label: "Hecha", widget: boolean, default: false }
+
+      - name: archivos
+        label: Descargas
+        file: posts/archivos.json
+        fields:
+          - name: items
+            label: Archivos
+            label_singular: archivo
+            widget: list
+            root: true
+            add_to_top: true
+            summary: "{{title}}"
+            fields:
+              - { name: title, label: Titulo, widget: string }
+              - { name: title_en, label: "Titulo en ingles", widget: string, required: false }
+              - name: file
+                label: Archivo
+                widget: file
+                media_folder: /assets/files
+                public_folder: assets/files
+                accept: ".pdf,.txt,.png,.jpg,.jpeg,.webp,.gif,.mp3,.ogg,.wav,.ttf,.otf,.woff,.woff2,.svg,.csv"
+                hint: "Neocities gratis no admite .zip ni videos."
+              - { name: description, label: Descripcion, widget: text, required: false }
+              - { name: description_en, label: "Descripcion en ingles", widget: text, required: false }
+              - { name: date, label: Fecha, widget: datetime, type: date, required: false }
+
+      - name: colecciones
+        label: Colecciones
+        file: posts/colecciones.json
+        fields:
+          - name: items
+            label: Colecciones
+            label_singular: coleccion
+            widget: list
+            root: true
+            summary: "{{title}} ({{id}})"
+            fields:
+              - { name: id, label: "Id (sin espacios ni tildes)", widget: string, pattern: ["^[a-z0-9-]+$", "Solo minusculas, numeros y guiones"] }
+              - { name: title, label: Titulo, widget: string }
+              - { name: title_en, label: "Titulo en ingles", widget: string, required: false }
+              - { name: description, label: Descripcion, widget: text, required: false }
+              - { name: description_en, label: "Descripcion en ingles", widget: text, required: false }
+              - { name: cover, label: Portada, widget: image, required: false }
+
+      - name: redes
+        label: Redes (Instagram y Pinterest)
+        file: assets/data/redes.json
+        fields:
+          - { name: instagram, label: "Tu usuario de Instagram (sin @)", widget: string, required: false }
+          - { name: pinterest, label: "Tu usuario de Pinterest", widget: string, required: false,
+               hint: "El muro de Pinterest se actualiza solo una vez al dia." }
+          - { name: pinterest_boards, label: "Tableros de Pinterest (opcional)", widget: list, required: false,
+               hint: "El final de la direccion del tablero (pinterest.com/usuario/ESTO). Vacio = todo tu perfil." }
+          - name: instagram_posts
+            label: Publicaciones de Instagram elegidas
+            label_singular: publicacion
+            widget: list
+            required: false
+            summary: "{{url}}"
+            fields:
+              - { name: url, label: "Enlace de la publicacion", widget: string }
+              - { name: note, label: "Nota (opcional)", widget: string, required: false }
+              - { name: note_en, label: "Nota en ingles (opcional)", widget: string, required: false }
+
+      - name: mascota
+        label: Mascota (Nix)
+        file: assets/data/nix-pet.json
+        fields:
+          - { name: mira, label: "Hacia donde miran sus dibujos", widget: select, options: [izquierda, derecha], default: izquierda }
+          - { name: tamano, label: "Tamano (px)", widget: number, value_type: int, min: 48, max: 220, default: 118 }
+          - { name: velocidad, label: "Velocidad al caminar", widget: number, value_type: float, min: 1, max: 10, default: 3 }
+          - name: animaciones
+            label: Movimientos
+            widget: object
+            hint: "Cada movimiento es una lista de dibujos que se van turnando. fps = dibujos por segundo."
+            fields:
+              - { name: quieta, label: "Quieta", widget: object, fields: [{ name: frames, label: Dibujos, widget: list, field: { name: frame, label: Dibujo, widget: image, media_folder: /assets/img/fox, public_folder: assets/img/fox } }, { name: fps, label: fps, widget: number, value_type: float, min: 0.5, max: 24, default: 1 }] }
+              - { name: camina, label: "Camina", widget: object, fields: [{ name: frames, label: Dibujos, widget: list, field: { name: frame, label: Dibujo, widget: image, media_folder: /assets/img/fox, public_folder: assets/img/fox } }, { name: fps, label: fps, widget: number, value_type: float, min: 0.5, max: 24, default: 1 }] }
+              - { name: duerme, label: "Duerme", widget: object, fields: [{ name: frames, label: Dibujos, widget: list, field: { name: frame, label: Dibujo, widget: image, media_folder: /assets/img/fox, public_folder: assets/img/fox } }, { name: fps, label: fps, widget: number, value_type: float, min: 0.5, max: 24, default: 1 }] }
+              - { name: juega, label: "Juega", widget: object, fields: [{ name: frames, label: Dibujos, widget: list, field: { name: frame, label: Dibujo, widget: image, media_folder: /assets/img/fox, public_folder: assets/img/fox } }, { name: fps, label: fps, widget: number, value_type: float, min: 0.5, max: 24, default: 1 }] }
+              - { name: atenta, label: "Atenta", widget: object, fields: [{ name: frames, label: Dibujos, widget: list, field: { name: frame, label: Dibujo, widget: image, media_folder: /assets/img/fox, public_folder: assets/img/fox } }, { name: fps, label: fps, widget: number, value_type: float, min: 0.5, max: 24, default: 1 }] }
+              - { name: come, label: "Come", widget: object, fields: [{ name: frames, label: Dibujos, widget: list, field: { name: frame, label: Dibujo, widget: image, media_folder: /assets/img/fox, public_folder: assets/img/fox } }, { name: fps, label: fps, widget: number, value_type: float, min: 0.5, max: 24, default: 1 }] }
+              - { name: feliz, label: "Feliz (al acariciarla)", widget: object, fields: [{ name: frames, label: Dibujos, widget: list, field: { name: frame, label: Dibujo, widget: image, media_folder: /assets/img/fox, public_folder: assets/img/fox } }, { name: fps, label: fps, widget: number, value_type: float, min: 0.5, max: 24, default: 1 }] }
+              - { name: baila, label: "Baila (con tu musica)", widget: object, fields: [{ name: frames, label: Dibujos, widget: list, field: { name: frame, label: Dibujo, widget: image, media_folder: /assets/img/fox, public_folder: assets/img/fox } }, { name: fps, label: fps, widget: number, value_type: float, min: 0.5, max: 24, default: 1 }] }
+          - name: extras
+            label: Movimientos extra (los hace sola de vez en cuando)
+            label_singular: movimiento
+            widget: list
+            required: false
+            summary: "{{nombre}}"
+            fields:
+              - { name: nombre, label: "Nombre (sin espacios)", widget: string, pattern: ["^[a-z0-9-]+$", "Solo minusculas, numeros y guiones"] }
+              - { name: frames, label: Dibujos, widget: list, field: { name: frame, label: Dibujo, widget: image, media_folder: /assets/img/fox, public_folder: assets/img/fox } }
+              - { name: fps, label: fps, widget: number, value_type: float, min: 0.5, max: 24, default: 4 }
+              - { name: duracion, label: "Duracion (milisegundos)", widget: number, value_type: int, min: 500, max: 20000, default: 3000 }
+          - name: dulces
+            label: Dulces
+            label_singular: dulce
+            widget: list
+            max: 4
+            fields:
+              - { name: emoji, label: Emoji, widget: string }
+              - { name: es, label: "Nombre", widget: string }
+              - { name: en, label: "Nombre en ingles", widget: string }
+          - name: frases
+            label: Frases
+            widget: object
+            fields:
+              - { name: hola_es, label: "Al llegar", widget: list }
+              - { name: hola_en, label: "Al llegar (ingles)", widget: list }
+              - { name: noche_es, label: "De noche", widget: list }
+              - { name: noche_en, label: "De noche (ingles)", widget: list }
+              - { name: caricia_es, label: "Al acariciarla", widget: list }
+              - { name: caricia_en, label: "Al acariciarla (ingles)", widget: list }
+              - { name: comida_es, label: "Al comer", widget: list }
+              - { name: comida_en, label: "Al comer (ingles)", widget: list }
+              - { name: aburrida_es, label: "Aburrida", widget: list }
+              - { name: aburrida_en, label: "Aburrida (ingles)", widget: list }
+              - { name: musica_es, label: "Con musica", widget: list }
+              - { name: musica_en, label: "Con musica (ingles)", widget: list }
