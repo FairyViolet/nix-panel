@@ -79,6 +79,15 @@ collections:
       - &mood { name: mood, label: Animo, widget: string, required: false, i18n: duplicate }
       - &song { name: song, label: "Sonando (enlace de YouTube)", widget: string, required: false, i18n: duplicate, hint: "Opcional. Pega el enlace de la cancion: sale como 'escuchando'." }
       - &cover { name: image, label: "Imagen de portada", widget: image, required: false, i18n: duplicate }
+      - &gallery
+        name: gallery
+        label: "Mas fotos (album)"
+        label_singular: foto
+        widget: list
+        required: false
+        i18n: duplicate
+        hint: "Opcional. Pulsa 'Anadir foto' una vez por imagen: salen en cuadricula debajo, y al pulsar se ven en grande. Tambien puedes meter fotos dentro del texto."
+        field: { name: image, label: Foto, widget: image }
       - &audio
         name: audio
         label: "Audio propio (mp3, ogg o wav)"
@@ -152,6 +161,7 @@ collections:
       - *title
       - *date
       - { name: image, label: "Tu dibujo", widget: image, i18n: duplicate }
+      - *gallery
       - *tags
       - *collection
       - *instagram
@@ -180,7 +190,8 @@ collections:
       - { name: type, label: Tipo, widget: hidden, default: foto, i18n: duplicate }
       - *title
       - *date
-      - { name: image, label: "La foto", widget: image, i18n: duplicate }
+      - { name: image, label: "La foto principal", widget: image, i18n: duplicate }
+      - *gallery
       - *tags
       - *collection
       - *instagram
@@ -263,6 +274,14 @@ collections:
         fields:
           - { name: name, label: "Nombre de la playlist", widget: string }
           - { name: playlist, label: "Enlace a la playlist de YouTube", widget: string, hint: "Nix Radio reproduce la lista entera. Las canciones de abajo son solo el respaldo." }
+          - name: albums
+            label: Otras listas de Nix Radio
+            widget: list
+            required: false
+            fields:
+              - { name: name, label: Nombre, widget: string }
+              - { name: name_en, label: Nombre en inglés, widget: string, required: false }
+              - { name: playlist, label: Enlace a la lista de YouTube, widget: string }
           - name: songs
             label: Canciones
             label_singular: cancion

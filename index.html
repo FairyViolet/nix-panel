@@ -2,11 +2,137 @@
 <html lang="es">
 <head>
 <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex">
-<meta http-equiv="refresh" content="0; url=admin/">
 <title>Panel · Mi Mundo Nix</title>
+<link rel="icon" href="https://ultravioletfairy.neocities.org/assets/img/icons/floppy-heart.webp">
+<!-- Portada del panel: boton para entrar y una guia corta de como publicar.
+     Sin librerias: HTML y CSS a mano, como el resto del proyecto. -->
+<style>
+  :root {
+    --bg: #120a1f;
+    --card: #1d1230;
+    --text: #f3eaff;
+    --muted: #c3b2dc;
+    --pink: #ff63a5;
+    --blue: #7cc8ff;
+    --line: #4a3470;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font: 17px/1.6 system-ui, -apple-system, "Segoe UI", sans-serif;
+  }
+  main { max-width: 760px; margin: 0 auto; padding: 32px 16px 64px; }
+  h1 { font-size: 1.8rem; margin: 0 0 4px; }
+  h2 { font-size: 1.25rem; margin: 40px 0 8px; color: var(--pink); }
+  p, li { color: var(--muted); }
+  strong, b { color: var(--text); }
+  a { color: var(--blue); }
+  .go {
+    display: inline-flex;
+    align-items: center;
+    min-height: 52px;
+    margin: 20px 0 8px;
+    padding: 0 28px;
+    border-radius: 999px;
+    background: var(--pink);
+    color: #1a0b22;
+    font-weight: 700;
+    font-size: 1.1rem;
+    text-decoration: none;
+  }
+  .go:hover, .go:focus-visible { background: #ff8cbd; }
+  .card {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 4px 20px;
+    margin: 12px 0;
+  }
+  ol, ul { padding-left: 1.3em; }
+  li { margin: 6px 0; }
+  table { width: 100%; border-collapse: collapse; font-size: .95rem; }
+  th, td { text-align: left; padding: 8px 6px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  th { color: var(--text); }
+  td { color: var(--muted); }
+  code { background: #2a1b45; padding: 1px 5px; border-radius: 4px; color: var(--text); }
+  .note { font-size: .92rem; }
+</style>
 </head>
 <body>
-<p><a href="admin/">Ir al panel de Mi Mundo Nix</a></p>
+<main>
+  <h1>Panel de Mi Mundo Nix</h1>
+  <p>Aqu&iacute; escribes tu diario y subes tus fotos, dibujos y todo lo dem&aacute;s,
+     desde el ordenador o desde el m&oacute;vil. Al guardar, la web se actualiza sola
+     en uno o dos minutos.</p>
+  <a class="go" href="admin/">Entrar al panel &rarr;</a>
+  <p class="note">Consejo: guarda <b>esta p&aacute;gina</b> en favoritos o en la pantalla de inicio del m&oacute;vil.</p>
+
+  <h2>1. Entrar (solo la primera vez en cada aparato)</h2>
+  <div class="card">
+    <p>El panel te pide una &laquo;llave&raquo; de GitHub, que se llama <b>token</b>.
+       Se hace una vez y sirve meses.</p>
+    <ol>
+      <li>Abre <a href="https://github.com/settings/personal-access-tokens/new" rel="noopener">esta p&aacute;gina de GitHub</a>
+          (con tu cuenta abierta).</li>
+      <li><b>Token name</b>: ponle un nombre, por ejemplo <code>panel nix</code>.</li>
+      <li><b>Expiration</b>: elige la fecha m&aacute;s lejana que te deje (cuando caduque, se hace otro igual).</li>
+      <li><b>Repository access</b>: elige <b>Only select repositories</b> y marca <code>mi-mundo-nix</code>.</li>
+      <li><b>Permissions &rarr; Repository permissions &rarr; Contents</b>: c&aacute;mbialo a <b>Read and write</b>.
+          No toques nada m&aacute;s.</li>
+      <li>Pulsa <b>Generate token</b> y copia el texto largo que empieza por <code>github_pat_</code>.
+          Gu&aacute;rdalo en Bitwarden: GitHub no te lo vuelve a ense&ntilde;ar.</li>
+      <li>Vuelve aqu&iacute;, pulsa <b>Entrar al panel</b>, luego <b>Sign In with Token</b> y p&eacute;galo.</li>
+    </ol>
+    <p class="note">Ese token es como una contrase&ntilde;a: no lo pegues en ning&uacute;n otro sitio
+       ni lo mandes por mensaje.</p>
+  </div>
+
+  <h2>2. D&oacute;nde va cada cosa</h2>
+  <div class="card">
+    <table>
+      <thead><tr><th>Quiero&hellip;</th><th>En el panel</th><th>Sale en la web en</th></tr></thead>
+      <tbody>
+        <tr><td>escribir en mi diario</td><td><b>Diario</b> &rarr; New</td><td>Diario</td></tr>
+        <tr><td>subir fotos</td><td><b>Fotos</b> &rarr; New</td><td>Fotos</td></tr>
+        <tr><td>subir un dibujo</td><td><b>Dibujos</b> &rarr; New</td><td>Dibujos (Arte)</td></tr>
+        <tr><td>publicar un poema</td><td><b>Poemas</b> &rarr; New</td><td>Poemas</td></tr>
+        <tr><td>un cap&iacute;tulo de mi historia</td><td><b>Historias (capitulos)</b></td><td>Historias</td></tr>
+        <tr><td>una nota corta o c&oacute;mo me siento hoy</td><td><b>Ajustes &rarr; Notas rapidas</b> o <b>Registro de animo</b></td><td>Mi cuarto</td></tr>
+        <tr><td>qu&eacute; leo, veo, juego o escucho</td><td><b>Ajustes &rarr; Ahora mismo</b></td><td>Mi cuarto</td></tr>
+        <tr><td>mis metas</td><td><b>Ajustes &rarr; Metas</b></td><td>Mi cuarto</td></tr>
+        <tr><td>un archivo para descargar</td><td><b>Ajustes &rarr; Descargas</b></td><td>m&aacute;s &rarr; Descargas</td></tr>
+        <tr><td>agrupar entradas en una serie</td><td><b>Ajustes &rarr; Colecciones</b></td><td>m&aacute;s &rarr; Colecciones</td></tr>
+        <tr><td>Instagram y Pinterest</td><td><b>Ajustes &rarr; Redes</b></td><td>Redes</td></tr>
+        <tr><td>cambiar la m&uacute;sica de Nix Radio</td><td><b>Ajustes &rarr; Musica de Nix Radio</b></td><td>la radio</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2>3. Fotos: una o un &aacute;lbum entero</h2>
+  <div class="card">
+    <ul>
+      <li>En <b>Fotos</b>, la de <b>La foto principal</b> es la que sale en la galer&iacute;a.</li>
+      <li>En <b>Mas fotos (album)</b> pulsa <b>Add</b> una vez por cada foto extra: salen en cuadr&iacute;cula
+          debajo de la principal, y al tocarlas se ven en grande. Lo mismo hay en Diario y Dibujos.</li>
+      <li>Tambi&eacute;n puedes meter una foto en medio del texto con el bot&oacute;n de imagen del editor.</li>
+      <li>No hace falta que las prepares: el panel las pasa a <code>.webp</code> y las achica solo.</li>
+    </ul>
+  </div>
+
+  <h2>4. Guardar y publicar</h2>
+  <div class="card">
+    <ul>
+      <li><b>Save</b> publica. En 1 o 2 minutos est&aacute; en la web.</li>
+      <li>Si a&uacute;n no quieres que se vea, marca <b>Borrador (no se publica)</b> antes de guardar.</li>
+      <li>El ingl&eacute;s es opcional: si lo dejas vac&iacute;o, la entrada sale en espa&ntilde;ol con un aviso.</li>
+      <li>&iquest;No aparece? Mira si hay una cruz roja en
+          <a href="https://github.com/FairyViolet/mi-mundo-nix/actions" rel="noopener">GitHub Actions</a>.</li>
+    </ul>
+  </div>
+</main>
 </body>
 </html>
